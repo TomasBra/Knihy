@@ -1,0 +1,65 @@
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #E01A76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+.kniha{
+    width:260px;
+}
+.obr {
+    height:270px;
+    object-fit:scale-down;
+}
+.kniha:hover .hide{
+    display:block;
+}
+.kniha:hover .show{
+    display:none;
+}
+.hide{
+    display:none;
+}
+.popis{
+    height:270px;
+}
+.Allreader {
+    display:none;
+}
+.reader{
+    height:800px;
+    width:1400px;
+}
+.hideBooks{
+    display:block;
+}
+.Remember{
+    width:22px;
+    height:22px;
+}
+.bottom{
+    position: fixed;
+    bottom: 0;
+}
+.title
+{
+    height:50px;
+}
+
+.ShowObject
+{
+    display:block;
+}
+
+.HideObject
+{
+    display: none;
+}
