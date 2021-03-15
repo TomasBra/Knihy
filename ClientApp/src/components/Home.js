@@ -3,16 +3,15 @@ import { Button } from 'bootstrap';
 import {Kniha} from './HomepageComponents/Kniha';
 import {Search} from './HomepageComponents/Search';
 
-export function Home (props){
-    
+export function Home(props) {
 
-    const [Knihy,SetKnihy] = useState([]);
+
+    const [Knihy, SetKnihy] = useState([]);
     const [UserInput, SetUserInput] = useState("");
     //
-    const [ReaderSource,SetReaderSource] = useState("");
+    const [ReaderSource, SetReaderSource] = useState("");
     const [ShowReader, SetShowReader] = useState("HideObject");
     const [ShowBooks, SetShowBooks] = useState("ShowObject")
-
 
     useEffect(() =>{
         GetKnihy();
@@ -44,11 +43,11 @@ export function Home (props){
                         <div className={ShowBooks}>
                             <div id="knihy" className="mt-5">
                                 <div className="row">
-                                {Knihy.map(function (kniha) {
+                                    {Knihy.length != 0 ? Knihy.map(function (kniha) {
                                     return(
                                       <Kniha kniha={kniha} readfc={readfc}></Kniha>
-                                    );
-                                })}
+                                        );
+                                    }) : <p>načítání...</p>}
 
                                 </div>
                             </div>
@@ -63,6 +62,7 @@ export function Home (props){
 
     async function GetKnihy() {
         const response = await fetch('GetKnihy');
+        console.log(Knihy);
         const data = await response.json();
         SetKnihy(data);
     }
