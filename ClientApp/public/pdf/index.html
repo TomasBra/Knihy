@@ -1,0 +1,13 @@
+<html>
+  <head>
+  </head>
+  <body>
+ <div id="area" class="area" name="area" style="height:100vh; width:100%;"></div>
+ </body>
+ <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+<script>
+  var book = ePub("Orwell - 1984.epub");
+  var rendition = book.renderTo("area");
+  rendition.display();
+</script>
+</html>

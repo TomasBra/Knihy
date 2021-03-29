@@ -45,7 +45,16 @@ namespace EknihyReact
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    // using Microsoft.AspNetCore.Http;
+                    ctx.Context.Response.Headers.Add(
+                         "Content-Type", "application/epub+zip");
+                }
+            });
             app.UseSpaStaticFiles();
 
             app.UseRouting();

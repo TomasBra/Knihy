@@ -25,16 +25,16 @@ namespace Maturita.Classes
 
         public bool SaveImage()
         {
-            if(obr!=null)
+            if (obr != null)
             {
-                //pozor!!! složka public se po sestavení mìní na složku build!!!
+                //pozor!!! sloï¿½ka public se po sestavenï¿½ mï¿½nï¿½ na sloï¿½ku build!!!
                 var dir = Directory.GetFiles("ClientApp\\build\\Images").Length;
                 Random random = new Random();
                 string nknihy = obr.FileName.Split(".")[0].ToString() + "_" + dir.ToString() + random.Next().ToString() + "." + obr.FileName.Split(".")[1];
                 var file = Path.Combine("ClientApp\\build\\Images", nknihy);
                 var stream = new FileStream(file, FileMode.Create);
                 obr.CopyTo(stream);
-                obrPath="Images\\"+nknihy;
+                obrPath = "Images\\" + nknihy;
                 Console.WriteLine(obrPath);
                 return true;
             }
@@ -42,16 +42,16 @@ namespace Maturita.Classes
         }
         public bool SavePdf()
         {
-            if(pdf!=null)
+            if (pdf != null)
             {
-                //pozor!!! složka public se po sestavení mìní na složku build!!!
+                //pozor!!! sloï¿½ka public se po sestavenï¿½ mï¿½nï¿½ na sloï¿½ku build!!!
                 var dir = Directory.GetFiles("ClientApp\\build\\pdf").Length;
                 Random random = new Random();
                 string nknihy = pdf.FileName.Split(".")[0].ToString() + "_" + dir.ToString() + random.Next().ToString() + "." + pdf.FileName.Split(".")[1];
-                var file2 = Path.Combine("ClientApp\\build\\pdf", nknihy);
+                var file2 = Path.Combine("ClientApp\\public\\pdf", nknihy);
                 var stream = new FileStream(file2, FileMode.Create);
                 pdf.CopyTo(stream);
-                pdfPath="pdf\\"+nknihy;
+                pdfPath = "pdf\\" + nknihy;
                 Console.WriteLine(pdfPath);
                 return true;
             }

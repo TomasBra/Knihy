@@ -1,22 +1,17 @@
-import React, { Component } from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
-import {  NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { Container } from "reactstrap";
+import { NavMenu } from "./NavMenu";
+import { NavItem, NavLink } from "reactstrap";
+import { Link } from "react-router-dom";
 
 export class Layout extends Component {
   static displayName = Layout.name;
 
-  render () {
+  render() {
     return (
-      <div className="h-100 container">
+      <div className="h-100">
         <NavMenu />
-        <Container>
-          {this.props.children}
-        </Container>
-        <div>
-            <NavLink tag={Link} className="text-dark" to="/Administration">Administrace</NavLink>
-        </div>
+        <Container>{this.props.children}</Container>
       </div>
     );
   }

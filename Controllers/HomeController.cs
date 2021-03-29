@@ -13,6 +13,11 @@ using Microsoft.Data.Sqlite;
 using Maturita.Classes;
 using Newtonsoft.Json;
 using EknihyReact.Classes;
+using SautinSoft;
+using System.Text;
+using eBdb.EpubReader;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Maturita.Controllers
 {
@@ -33,20 +38,33 @@ namespace Maturita.Controllers
             string json = JsonConvert.SerializeObject(knihy);
             return await Task.FromResult(json);
         }
-        
+
+        [Route("pdf/{id}")]
+        [HttpGet]
+        public ActionResult Download([FromRoute] string id)
+        {
+            string localFilePath;
+
+            localFilePath = @$"ClientApp/build/pdf/{id}";
+
+            return File(System.IO.File.OpenRead(localFilePath), "application/epub+zip");
+        }
+
         [Route("/LoginUser")]
         [HttpPost]
-        public async Task<string> login([FromBody]User user)
+        public async Task<string> login([FromBody] User user)
         {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Users.db");
             user.password = UsersCoding.EncryptData(user.password);
             User userBack = await SqliteMethods.CheckUser(connection, user);
-            if(userBack!=null&&userBack.authenticated){
-                user.authenticated=true;
+            if (userBack != null && userBack.authenticated)
+            {
+                user.authenticated = true;
             }
-            else{
-                user.username="nepřihlášen";
-                user.password="nepřihlášen";
+            else
+            {
+                user.username = "nepřihlášen";
+                user.password = "nepřihlášen";
             }
             string json = JsonConvert.SerializeObject(user);
             connection.Close();
@@ -55,16 +73,18 @@ namespace Maturita.Controllers
 
         [Route("/CheckUser")]
         [HttpPost]
-        public async Task<string> CheckUser([FromBody]User user)
+        public async Task<string> CheckUser([FromBody] User user)
         {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Users.db");
             User userBack = await (SqliteMethods.CheckUser(connection, user));
-            if(userBack!=null&&userBack.authenticated){
-                user.authenticated=true;
+            if (userBack != null && userBack.authenticated)
+            {
+                user.authenticated = true;
             }
-            else{
-                user.username="nepřihlášen";
-                user.password="nepřihlášen";
+            else
+            {
+                user.username = "nepřihlášen";
+                user.password = "nepřihlášen";
             }
             string json = JsonConvert.SerializeObject(user);
             connection.Close();
@@ -73,7 +93,7 @@ namespace Maturita.Controllers
 
         [Route("/AddUser")]
         [HttpPost]
-        public async Task<string> AddUser([FromBody]User user)
+        public async Task<string> AddUser([FromBody] User user)
         {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Users.db");
             await SqliteMethods.AddUser(connection, user);
@@ -95,7 +115,7 @@ namespace Maturita.Controllers
 
         [Route("/AddKniha")]
         [HttpPost]
-        public async Task<string> NewKniha([FromForm]AddKniha kniha)
+        public async Task<string> NewKniha([FromForm] AddKniha kniha)
         {
             Console.WriteLine(kniha.pdf.FileName);
             kniha.SaveImage();
@@ -111,10 +131,10 @@ namespace Maturita.Controllers
 
         [Route("/Delete")]
         [HttpPost]
-        public async Task<string> DeleteKniha([FromBody]Kniha kniha)
+        public async Task<string> DeleteKniha([FromBody] Kniha kniha)
         {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Knihy.db");
-            await SqliteMethods.DeleteOneKnihaSqlite(connection,$"DELETE FROM Knihy WHERE Id='{kniha.id}'");
+            await SqliteMethods.DeleteOneKnihaSqlite(connection, $"DELETE FROM Knihy WHERE Id='{kniha.id}'");
             List<Kniha> knihy = await SqliteMethods.GetKnihyFromSqlite(connection, "SELECT * FROM Knihy Order by název ASC");
             connection.Close();
             string json = JsonConvert.SerializeObject(knihy);
@@ -123,23 +143,23 @@ namespace Maturita.Controllers
 
         [Route("/EditKniha")]
         [HttpPost]
-        public async Task<string> EditKniha([FromForm]AddKniha kniha)
-        {   
+        public async Task<string> EditKniha([FromForm] AddKniha kniha)
+        {
             bool pdf = kniha.SavePdf();
             bool image = kniha.SaveImage();
-            
+
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Knihy.db");
             //
-            if (pdf&&image)
+            if (pdf && image)
             {
                 await SqliteMethods.UpdateKniha(connection, $"UPDATE Knihy SET Název='{kniha.nazev}', Autor='{kniha.autor}', Obsah='{kniha.obsah}', Období='{kniha.obdobi}', Žánr='{kniha.zanr}', PDF='{kniha.pdfPath}', OBR='{kniha.obrPath}'  WHERE Id='{kniha.id}'");
             }
-            else if(pdf)
+            else if (pdf)
             {
 
                 await SqliteMethods.UpdateKniha(connection, $"UPDATE Knihy SET Název='{kniha.nazev}', Autor='{kniha.autor}', Obsah='{kniha.obsah}', Období='{kniha.obdobi}', Žánr='{kniha.zanr}', PDF='{kniha.pdfPath}'  WHERE Id='{kniha.id}'");
             }
-            else if(image)
+            else if (image)
             {
                 await SqliteMethods.UpdateKniha(connection, $"UPDATE Knihy SET Název='{kniha.nazev}', Autor='{kniha.autor}', Obsah='{kniha.obsah}', Období='{kniha.obdobi}', Žánr='{kniha.zanr}', OBR='{kniha.obrPath}'  WHERE Id='{kniha.id}'");
             }
@@ -155,14 +175,14 @@ namespace Maturita.Controllers
 
         [Route("/FindBooks")]
         [HttpPost]
-        public async Task<string> FindBooks([FromBody]Search kniha)
-        {   
+        public async Task<string> FindBooks([FromBody] Search kniha)
+        {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Knihy.db");
-            if(kniha.obdobi=="období:")
+            if (kniha.obdobi == "období:")
             {
                 kniha.obdobi = "";
             }
-            if(kniha.zanr =="žánr:")
+            if (kniha.zanr == "žánr:")
             {
                 kniha.zanr = "";
             }
@@ -179,9 +199,9 @@ namespace Maturita.Controllers
         [Route("/GetSeznam")]
         [HttpGet]
         public async Task<string> GetSeznam()
-        {   
+        {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Knihy.db");
-            SeznamNastaveni nastaveni = await SqliteMethods.GetOptions(connection,"SELECT * FROM SeznamNastaveni");
+            SeznamNastaveni nastaveni = await SqliteMethods.GetOptions(connection, "SELECT * FROM SeznamNastaveni");
             connection.Close();
             string json = JsonConvert.SerializeObject(nastaveni);
             return await Task.FromResult(json);
@@ -189,11 +209,11 @@ namespace Maturita.Controllers
 
         [Route("/SetSeznam")]
         [HttpPost]
-        public async Task<string> SetSeznam([FromBody]SeznamNastaveni nastaveni)
-        {   
+        public async Task<string> SetSeznam([FromBody] SeznamNastaveni nastaveni)
+        {
             SqliteConnection connection = SqliteMethods.OpenConnectionToSqlite("Knihy.db");
-            await SqliteMethods.UpdateSeznam(connection,$"UPDATE SeznamNastaveni SET Maxknih='{nastaveni.MaxKnih}', MinDramat='{nastaveni.MinDramat}', MinPoezie='{nastaveni.MinPoezie}', MinPróza='{nastaveni.MinProza}', MaxStejnýAutor='{nastaveni.MaxStejnyAutor}', Min18='{nastaveni.Min18stol}', Min19='{nastaveni.Min19stol}', MinSV2021='{nastaveni.MinSV2021}', MinCZ2021='{nastaveni.MinCZ2021}'  ");
-            SeznamNastaveni Rnastaveni = await SqliteMethods.GetOptions(connection,"SELECT * FROM SeznamNastaveni");
+            await SqliteMethods.UpdateSeznam(connection, $"UPDATE SeznamNastaveni SET Maxknih='{nastaveni.MaxKnih}', MinDramat='{nastaveni.MinDramat}', MinPoezie='{nastaveni.MinPoezie}', MinPróza='{nastaveni.MinProza}', MaxStejnýAutor='{nastaveni.MaxStejnyAutor}', Min18='{nastaveni.Min18stol}', Min19='{nastaveni.Min19stol}', MinSV2021='{nastaveni.MinSV2021}', MinCZ2021='{nastaveni.MinCZ2021}'  ");
+            SeznamNastaveni Rnastaveni = await SqliteMethods.GetOptions(connection, "SELECT * FROM SeznamNastaveni");
             connection.Close();
             string json = JsonConvert.SerializeObject(Rnastaveni);
             return await Task.FromResult(json);
